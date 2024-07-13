@@ -1,0 +1,4 @@
+arxiv
+google-generativeai
+notion-client
+requests

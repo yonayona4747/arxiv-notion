@@ -1,19 +1,18 @@
 import arxiv
-import logging
-from utils import log_function_call, retry_on_exception
+
+from utils import log_function_call, retry_on_exception, get_logger
+
+logger = get_logger(__name__)
 
 
 class ArxivFetcher:
     def __init__(self, categories):
         self.categories = categories
-        self.logger = logging.getLogger(__name__)
 
     @log_function_call
-    @retry_on_exception(
-        max_retries=3, exceptions=(arxiv.HTTPError, arxiv.UnexpectedEmptyPageError)
-    )
+    @retry_on_exception(max_retries=3, exceptions=(arxiv.HTTPError,))
     def fetch_latest_papers(self):
-        self.logger.info(f"Fetching papers for categories: {self.categories}")
+        logger.info(f"Fetching papers for categories: {self.categories}")
         search = arxiv.Search(
             query=f"cat:{' OR '.join(self.categories)}",
             max_results=100,
@@ -33,7 +32,7 @@ class ArxivFetcher:
                 "published": result.published,
             }
             papers.append(paper)
-            self.logger.debug(f"Fetched paper: {paper['title']}")
+            logger.debug(f"Fetched paper: {paper['title']}")
 
-        self.logger.info(f"Fetched {len(papers)} papers")
+        logger.info(f"Fetched {len(papers)} papers")
         return papers

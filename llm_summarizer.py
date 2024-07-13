@@ -1,20 +1,22 @@
 import google.generativeai as genai
 import logging
-from utils import log_function_call, retry_on_exception
+
+from utils import log_function_call, retry_on_exception, get_logger
 import config
+
+logger = get_logger(__name__)
 
 
 class LLMSummarizer:
-    def __init__(self, api_key):
+    def __init__(self, api_key, model="gemini-pro"):
         self.api_key = api_key
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel("gemini-pro")
-        self.logger = logging.getLogger(__name__)
+        self.model = genai.GenerativeModel(model)
 
     @log_function_call
     @retry_on_exception(max_retries=3, exceptions=(Exception,))
     def summarize(self, full_text, paper_info):
-        self.logger.info(f"Summarizing paper: {paper_info['title']}")
+        logger.info(f"Summarizing paper: {paper_info['title']}")
 
         prompt = f"""
         論文のタイトル: {paper_info['title']}
@@ -38,7 +40,5 @@ class LLMSummarizer:
         response = self.model.generate_content(prompt)
         summary = response.text
 
-        self.logger.debug(f"Generated summary for {paper_info['title']}")
+        logger.debug(f"Generated summary for {paper_info['title']}")
         return summary
-
-    # 他のLLMに対応する場合、ここに新しいメソッドを追加

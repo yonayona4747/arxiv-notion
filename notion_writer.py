@@ -1,19 +1,21 @@
 from notion_client import Client
 import logging
-from utils import log_function_call, retry_on_exception
+
+from utils import log_function_call, retry_on_exception, get_logger
 import config
+
+logger = get_logger(__name__)
 
 
 class NotionWriter:
     def __init__(self, api_key, database_id):
         self.client = Client(auth=api_key)
         self.database_id = database_id
-        self.logger = logging.getLogger(__name__)
 
     @log_function_call
     @retry_on_exception(max_retries=3, exceptions=(Exception,))
     def write_entry(self, paper_info, summary, full_text):
-        self.logger.info(f"Writing entry to Notion for paper: {paper_info['title']}")
+        logger.info(f"Writing entry to Notion for paper: {paper_info['title']}")
 
         # サマリーから各セクションを抽出
         summary_sections = self._extract_summary_sections(summary)
@@ -90,7 +92,7 @@ class NotionWriter:
             },
         )
 
-        self.logger.debug(f"Successfully created Notion page for {paper_info['title']}")
+        logger.debug(f"Successfully created Notion page for {paper_info['title']}")
         return new_page
 
     def _extract_summary_sections(self, summary):

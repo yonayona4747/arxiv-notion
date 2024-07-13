@@ -1,11 +1,14 @@
 import argparse
 import logging
-from utils import setup_logging
+
 from arxiv_fetcher import ArxivFetcher
 from jina_processor import JinaProcessor
 from llm_summarizer import LLMSummarizer
 from notion_writer import NotionWriter
 import config
+from utils import setup_logging, get_logger
+
+logger = get_logger(__name__)
 
 
 def main():
@@ -16,12 +19,11 @@ def main():
     args = parser.parse_args()
 
     setup_logging(args.debug)
-    logger = logging.getLogger(__name__)
 
     try:
         arxiv_fetcher = ArxivFetcher(config.ARXIV_CATEGORIES)
         jina_processor = JinaProcessor(config.JINA_API_KEY)
-        llm_summarizer = LLMSummarizer(config.LLM_API_KEY)
+        llm_summarizer = LLMSummarizer(config.LLM_API_KEY, config.LLM_MODEL)
         notion_writer = NotionWriter(config.NOTION_API_KEY, config.NOTION_DATABASE_ID)
 
         papers = arxiv_fetcher.fetch_latest_papers()

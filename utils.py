@@ -3,8 +3,11 @@ import os
 import sys
 from functools import wraps
 
+def get_logger(name):
+    logger = logging.getLogger(name)
+    return logger
 
-def setup_logging(debug_mode):
+def setup_logging(debug_mode=False):
     # ログディレクトリの作成
     os.makedirs("log", exist_ok=True)
 
@@ -40,8 +43,7 @@ def log_function_call(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         logger = logging.getLogger(func.__module__)
-        if logger.getEffectiveLevel() <= logging.DEBUG:
-            logger.debug(f"Calling function: {func.__name__}")
+        logger.debug(f"Calling function: {func.__name__}")
         return func(*args, **kwargs)
 
     return wrapper

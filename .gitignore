@@ -1,2 +1,5 @@
-./config.py
-./output.md
+config.py
+output.md
+log/*
+__pycache__/*
+output.md

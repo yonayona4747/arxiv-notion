@@ -3,6 +3,15 @@ import os
 import sys
 from functools import wraps
 
+
+class ModuleFilter(logging.Filter):
+    def __init__(self, module_name):
+        super().__init__()
+        self.module_name = module_name
+
+    def filter(self, record):
+        return record.name.startswith(self.module_name)
+
 def get_logger(name):
     logger = logging.getLogger(name)
     return logger
@@ -37,6 +46,17 @@ def setup_logging(debug_mode=False):
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(formatter)
     root_logger.addHandler(error_handler)
+
+    # llm_summarizer.logへのハンドラ
+    llm_summarizer_handler = logging.FileHandler("log/llm_summarizer.log")
+    llm_summarizer_handler.setLevel(logging.DEBUG)
+    llm_summarizer_handler.setFormatter(formatter)
+    
+    # フィルターの追加
+    llm_summarizer_filter = ModuleFilter(module_name='llm_summarizer')
+    llm_summarizer_handler.addFilter(llm_summarizer_filter)
+    
+    root_logger.addHandler(llm_summarizer_handler)
 
 
 def log_function_call(func):

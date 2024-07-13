@@ -16,6 +16,8 @@ class JinaProcessor:
 
         # Try HTML version first
         html_url = f"https://r.jina.ai/{paper_info['html_url']}"
+        logger.debug(f"######{paper_info['html_url']}")
+
         response = self._make_request(html_url)
         if response.status_code == 200:
             logger.debug(

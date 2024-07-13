@@ -26,7 +26,13 @@ def main():
         llm_summarizer = LLMSummarizer(config.LLM_API_KEY, config.LLM_MODEL)
         notion_writer = NotionWriter(config.NOTION_API_KEY, config.NOTION_DATABASE_ID)
 
-        papers = arxiv_fetcher.fetch_latest_papers()
+        # DEBUGモードのチェック
+        if args.debug:
+            max_results = 1
+        else:
+            max_results = config.ARXIV_MAX_RESULTS
+
+        papers = arxiv_fetcher.fetch_latest_papers(max_results=max_results)
 
         for paper in papers:
             try:

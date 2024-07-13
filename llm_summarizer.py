@@ -40,5 +40,8 @@ class LLMSummarizer:
         response = self.model.generate_content(prompt)
         summary = response.text
 
+        # LLMの出力をログに記録
+        logger.debug(f"LLM Output:\n{summary}") 
+
         logger.debug(f"Generated summary for {paper_info['title']}")
         return summary

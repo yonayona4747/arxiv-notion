@@ -11,11 +11,11 @@ class ArxivFetcher:
 
     @log_function_call
     @retry_on_exception(max_retries=3, exceptions=(arxiv.HTTPError,))
-    def fetch_latest_papers(self):
+    def fetch_latest_papers(self, max_results=100):  # max_results を引数に追加
         logger.info(f"Fetching papers for categories: {self.categories}")
         search = arxiv.Search(
             query=f"cat:{' OR '.join(self.categories)}",
-            max_results=100,
+            max_results=max_results,  # max_results を使用する
             sort_by=arxiv.SortCriterion.SubmittedDate,
             sort_order=arxiv.SortOrder.Descending,
         )
@@ -28,7 +28,7 @@ class ArxivFetcher:
                 "authors": [author.name for author in result.authors],
                 "abstract": result.summary,
                 "pdf_url": result.pdf_url,
-                "html_url": f"https://arxiv.org/html/{result.get_short_id()}v1",
+                "html_url": f"https://arxiv.org/html/{result.get_short_id()}",
                 "published": result.published,
             }
             papers.append(paper)

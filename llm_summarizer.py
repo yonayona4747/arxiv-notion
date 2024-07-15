@@ -1,5 +1,5 @@
 import google.generativeai as genai
-import logging
+import json
 
 from utils import log_function_call, retry_on_exception, get_logger
 import config
@@ -20,24 +20,25 @@ class LLMSummarizer:
 
         prompt = f"""
                 次のJSON形式に従って、以下の論文情報をまとめてください。
+                なお、下記のjsonはわざと丸括弧を使っているので、出力するときには波括弧を用いよ。
 
-                ```json
-                {
-                "論文データ": {
-                    "論文タイトル": null,
-                    "著者": null,
-                    "アブストラクト": null,
-                    "キーワード": null,
-                    "論文の概要と目的": null,
-                    "従来研究との比較・改善点": null,
-                    "核となる技術・手法": null,
-                    "有効性の検証方法": null,
-                    "議論すべき点": null,
-                    "次に読むべき論文": null
-                }
-                }
-                ```
-
+                '''json
+                (
+                    "論文データ": (
+                        "論文タイトル": "論文タイトル",
+                        "著者": "著者",
+                        "アブストラクト": "アブストラクト",
+                        "キーワード": "キーワード",
+                        "論文の概要と目的": "論文の概要と目的",
+                        "従来研究との比較・改善点": "従来研究との比較・改善点",
+                        "核となる技術・手法": "核となる技術・手法",
+                        "有効性の検証方法": "有効性の検証方法",
+                        "議論すべき点": "議論すべき点",
+                        "次に読むべき論文": "次に読むべき論文"
+                    )
+                )
+                '''
+                
                 論文タイトル、著者、アブストラクト には、与えられた論文の情報をそのまま出力してください。
                 キーワードは論文中に「Keyword」や「Index Term」などがあればそれを抽出せよ。
                 無い場合は、論文中から5～10個のキーワードを抽出せよ。
@@ -60,10 +61,20 @@ class LLMSummarizer:
             """
 
         response = self.model.generate_content(prompt)
-        summary = response.text
+        summary_str = response.text
+
+        # summary_str = self._escape_json_string(summary_str)
+
+        summary = json.loads(summary_str)
 
         # LLMの出力をログに記録
         logger.debug(f"LLM Output:\n{summary}") 
 
         logger.debug(f"Generated summary for {paper_info['title']}")
         return summary
+
+
+    def _escape_json_string(self, json_str):
+        # Pythonのフォーマット指定子と誤認識される可能性のある '"' をエスケープ
+        escaped_str = json_str.replace('"', '\\"')
+        return escaped_str

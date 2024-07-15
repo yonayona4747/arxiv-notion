@@ -38,12 +38,17 @@ def main():
             try:
                 full_text = jina_processor.get_full_text(paper)
                 if full_text:
-                    summary_json = llm_summarizer.summarize(full_text, paper) # JSON形式で受け取る
+                    summary_json = llm_summarizer.summarize(full_text, paper)
+
+                    logger.debug(f"#### sumamry_json : \n{summary_json}")
+                    logger.info(f"{type(summary_json)}")
+
+                    summary = summary_json["論文データ"]
+
+                    logger.debug(f"#### summary : \n{summary}")
                     
-                    # JSONから必要な情報を抽出
-                    summary = summary_json['論文データ']
-                    
-                    notion_writer.write_entry(paper, summary, full_text) 
+                    # paper ではなく paper_info を渡す
+                    notion_writer.write_entry(paper, summary, full_text)  
                 else:
                     logger.warning(
                         f"Skipping paper due to missing full text: {paper['title']}"

@@ -16,26 +16,28 @@ class NotionWriter:
     def write_entry(self, paper_info, summary, full_text):  # summaryはJSON形式
         logger.info(f"Writing entry to Notion for paper: {paper_info['title']}")
 
+        paper_data = summary
+
         # Notionページの作成
         new_page = self.client.pages.create(
             parent={"database_id": self.database_id},
             properties={
                 config.NOTION_COLUMNS["タイトル(英語)"]: {
-                    "title": [{"text": {"content": summary["論文タイトル"]}}]  # JSONから取得
+                    "title": [{"text": {"content": paper_data["論文タイトル"]}}]  
                 },
                 config.NOTION_COLUMNS["abstract"]: {
-                    "rich_text": [{"text": {"content": summary["アブストラクト"]}}]  # JSONから取得
+                    "rich_text": [{"text": {"content": paper_data["アブストラクト"]}}]  
                 },
                 config.NOTION_COLUMNS["Index Term"]: {
                     "multi_select": [
-                        {"name": term.strip()} for term in summary["キーワード"].split(",")  # JSONから取得し、空白を削除
+                        {"name": term.strip()} for term in paper_data["キーワード"].split(",")
                     ]
                 },
                 config.NOTION_COLUMNS["概要・目的"]: {
                     "rich_text": [
                         {
                             "text": {
-                                "content": summary["論文の概要と目的"]  # JSONから取得
+                                "content": paper_data["論文の概要と目的"]
                             }
                         }
                     ]
@@ -44,7 +46,7 @@ class NotionWriter:
                     "rich_text": [
                         {
                             "text": {
-                                "content": summary["従来研究との比較・改善点"]  # JSONから取得
+                                "content": paper_data["従来研究との比較・改善点"] 
                             }
                         }
                     ]
@@ -53,7 +55,7 @@ class NotionWriter:
                     "rich_text": [
                         {
                             "text": {
-                                "content": summary["核となる技術・手法"]  # JSONから取得
+                                "content": paper_data["核となる技術・手法"]
                             }
                         }
                     ]
@@ -62,21 +64,21 @@ class NotionWriter:
                     "rich_text": [
                         {
                             "text": {
-                                "content": summary["有効性の検証方法"]  # JSONから取得
+                                "content": paper_data["有効性の検証方法"]
                             }
                         }
                     ]
                 },
                 config.NOTION_COLUMNS["議論すべき点"]: {
                     "rich_text": [
-                        {"text": {"content": summary["議論すべき点"]}}  # JSONから取得
+                        {"text": {"content": paper_data["議論すべき点"]}}  
                     ]
                 },
                 config.NOTION_COLUMNS["次に読むべき論文"]: {
                     "rich_text": [
                         {
                             "text": {
-                                "content": summary["次に読むべき論文"]  # JSONから取得
+                                "content": paper_data["次に読むべき論文"] 
                             }
                         }
                     ]

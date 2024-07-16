@@ -16,7 +16,16 @@
 #### Notion
 - Notion Integrationの作成
 - Notion Integrationのシークレットキー取得
-- Notionで新規DB作成
+- Notionで新規DB作成し、次のようにカラムを設定する
+  - カラム名 : タイプ
+  - title : Title
+  - Index Term : Multi-select
+  - 概要・目的 : rich_text
+  - 先行研究との比較 : rich_text
+  - 核となる技術・手法 : rich_text
+  - 有効性の検証方法 : rich_text
+  - 議論すべき点 : rich_text
+  - 次に読むべき論文 : rich_text
 - NotionでDBのID取得
 - NotionのDBとIntegrationの連携
 #### Google AIStudio

@@ -1,4 +1,5 @@
 import arxiv
+from datetime import date, timedelta
 
 from utils import log_function_call, retry_on_exception, get_logger
 
@@ -13,8 +14,12 @@ class ArxivFetcher:
     @retry_on_exception(max_retries=3, exceptions=(arxiv.HTTPError,))
     def fetch_latest_papers(self, max_results=100):  # max_results を引数に追加
         logger.info(f"Fetching papers for categories: {self.categories}")
+
+        today = date.today().strftime("%Y%m%d")
+        yesterday = (date.today() - timedelta(days=1)).strftime("%Y%m%d")
+
         search = arxiv.Search(
-            query=f"cat:{' OR '.join(self.categories)}",
+            query=f"cat:{' OR '.join(self.categories)} AND submittedDate:[{yesterday} TO {today}]",
             max_results=max_results,  # max_results を使用する
             sort_by=arxiv.SortCriterion.SubmittedDate,
             sort_order=arxiv.SortOrder.Descending,
@@ -30,6 +35,7 @@ class ArxivFetcher:
                 "pdf_url": result.pdf_url,
                 "html_url": f"https://arxiv.org/html/{result.get_short_id()}",
                 "published": result.published,
+                "categories": result.categories,
             }
             papers.append(paper)
             logger.debug(f"Fetched paper: {paper['title']}")

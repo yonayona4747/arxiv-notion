@@ -39,9 +39,10 @@
 ### このプロジェクトの使い方
 
 1.  `config.py` を編集し、必要なAPIキー、データベースID、arXivカテゴリなどを設定します。
-2.  `pipenv install -r requirements.txt` を実行し、必要なライブラリをインストールします。
-3.  `pipenv run python main.py` を実行すると、ツールが起動します。
-4.  `--debug` オプションを付けて実行すると、デバッグモードで実行されます。
+2.  `pyenv local 3.12.0` 等でPythonの環境を作成します。
+3.  `pipenv install -r requirements.txt` を実行し、必要なライブラリをインストールします。(`pipenv sync`でもよい)
+4.  `pipenv run python main.py` を実行すると、ツールが起動します。
+5.  `--debug` オプションを付けて実行すると、デバッグモードで実行されます。
 
 ## 設定
 
